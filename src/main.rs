@@ -3,11 +3,10 @@
 use std::env;
 use std::fs::File;
 use std::io::{Read, Write};
-use std::path::Path;
 
 fn main() {
     //os.chdir("/inkbox/book/split")
-    //env::set_current_dir("/inkbox/book/split");
+    env::set_current_dir("/inkbox/book/split/").unwrap();
 
     //book = open("../book.txt", "r")
     let mut book = File::open("../book.txt").unwrap();
@@ -44,37 +43,46 @@ fn main() {
         }
     }
 
-    println!("{:?}", split_booklist);
-
-    /*
-    len_split_booklist = len(split_booklist)
-    i = 0
-    while i < len_split_booklist:
-        print(i)
-        istr = str(i)
-        file_iterator = open(istr, "w")
-        writecontent = " ".join(split_booklist[i])
-        writecontent = writecontent.replace("\n\n\n\n\n\n\n\n", "\n")
-        writecontent = writecontent.replace("\n\n\n\n\n\n\n", "\n")
-        writecontent = writecontent.replace("\n\n\n\n\n\n", "\n")
-        writecontent = writecontent.replace("\n\n\n\n\n", "\n")
-        writecontent = writecontent.replace("\n\n\n\n", "\n")
-        writecontent = writecontent.replace("\n\n\n", "\n")
-        file_iterator.write(writecontent)
-        file_iterator.close()
-        i += 1
-    */
+    //println!("{:?}", split_booklist);
 
     let mut count_file_name = 0;
     for one_file_string in split_booklist {
         let mut purged_vec: String = String::new();
         for string in one_file_string {
-            let mut new_string = string;
-            new_string = new_string.replace("\n\n\n\n\n", "\n");
-            new_string = new_string.replace("\n\n\n\n", "\n");
-            new_string = new_string.replace("\n\n\n", "\n");
+            let mut new_string: String = string;
+
+            //let abc = vec![
+            //    "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
+            //    "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "ą", "ć", "ę", "ł", "ń", "ó",
+            //    "ś", "ź", "ż", ",",
+            //];
+            /*
+            for letter in abc {
+                new_string = new_string.replace(
+                    &(letter.to_string() + &"\n".to_string()),
+                    &(letter.to_string() + &" "),
+                );
+                new_string = new_string.replace(
+                    &(letter.to_string().to_uppercase() + &"\n".to_string()),
+                    &(letter.to_string().to_uppercase() + &" "),
+                );
+            }
+            */
+            if new_string.is_empty() {
+                continue;
+            }
+
+            if !new_string.contains(".\r\n") {
+                new_string = new_string.replace("\r\n", "");
+            }
+
+            new_string = new_string.replace("  ", " ");
+
             purged_vec.push_str(&new_string);
-            purged_vec.push_str(" ");
+
+            if !new_string.contains("\n") {
+                purged_vec.push_str(" ");
+            }
         }
 
         let mut new_file = File::create(count_file_name.to_string()).unwrap();
