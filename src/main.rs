@@ -9,7 +9,7 @@ fn main() {
     env::set_current_dir("/inkbox/book/split/").unwrap();
 
     //book = open("../book.txt", "r")
-    let mut book = File::open("../book.txt").unwrap();
+    let mut book = File::open("/inkbox/book/book.txt").unwrap();
 
     //text = book.read()
     let mut text: String = String::new();
@@ -48,7 +48,10 @@ fn main() {
     let mut count_file_name = 0;
     for one_file_string in split_booklist {
         let mut purged_vec: String = String::new();
+
         for string in one_file_string {
+            println!("1 |{:?}|", string);
+
             let mut new_string: String = string;
 
             //let abc = vec![
@@ -71,23 +74,80 @@ fn main() {
             if new_string.is_empty() {
                 continue;
             }
+            if new_string.contains("\r\n\r\n\r\n\r\n") == false {
+                if new_string.contains(".\r\n") == true {
+                    // Don't ....... touch it
+                    if new_string.matches(".").count() == 1 {
+                        let mut many = false;
+                        if new_string.contains(".\r\n\r\n") == true {
+                            many = true;
+                        } else {
+                            while new_string.contains("\r\n\r\n") == true {
+                                new_string = new_string.replace("\r\n\r\n", " ");
+                            }
+                        }
+                        while new_string.contains("\r\n") == true {
+                            new_string = new_string.replace("\r\n", " ");
+                        }
 
-            if !new_string.contains(".\r\n") {
-                new_string = new_string.replace("\r\n", "");
+                        let mut string_replacement = "";
+                        if many == true {
+                            string_replacement = ".\r\n\r\n";
+                        } else {
+                            string_replacement = ".\r\n";
+                        }
+                        for num in 0..20 {
+                            new_string = new_string.replace(". ", ".");
+                        }
+                        new_string = new_string.replace(".", string_replacement);
+                    }
+                } else {
+                    //if new_string.contains("\r\n\r\n") == false {
+                    if new_string.contains("\r\n") == true {
+                        if new_string.contains("\r\n\r\n") == false {
+                            while new_string.contains("\r\n") == true {
+                                new_string = new_string.replace("\r\n", " ");
+                            }
+                        } else {
+                            if new_string.contains(".") == true {
+                                new_string = new_string.replace("\r\n\r\n", "!@#$%^&*(((");
+                                while new_string.contains("\r\n") == true {
+                                    new_string = new_string.replace("\r\n", " ");
+                                }
+                                new_string = new_string.replace("!@#$%^&*(((", "\r\n\r\n");
+                            }
+                        }
+                    }
+                    //}
+                }
+            } else {
+                new_string = new_string.replace("\r\n\r\n\r\n\r\n", "\r\n\r\n");
             }
 
+            /*
+            if new_string.contains(".\r\n") == false {
+                new_string = new_string.replace("\r\n", " ");
+
+            }
+            */
+
+            println!("2 |{:?}|", new_string);
             new_string = new_string.replace("  ", " ");
 
             purged_vec.push_str(&new_string);
 
-            if !new_string.contains("\n") {
+            /*if !new_string.contains("\n") {
                 purged_vec.push_str(" ");
-            }
+            } else {
+                println!("WTF \"{}\"", new_string);
+            }*/
+
+            purged_vec.push_str(" ");
         }
 
         let mut new_file = File::create(count_file_name.to_string()).unwrap();
 
-        new_file.write_all(purged_vec.as_bytes());
+        new_file.write_all(purged_vec.as_bytes()).unwrap();
         count_file_name += 1;
     }
 }
