@@ -50,7 +50,7 @@ fn main() {
         let mut purged_vec: String = String::new();
 
         for string in one_file_string {
-            println!("1 |{:?}|", string);
+            //println!("1 |{:?}|", string);
 
             let mut new_string: String = string;
 
@@ -131,7 +131,7 @@ fn main() {
             }
             */
 
-            println!("2 |{:?}|", new_string);
+            //println!("2 |{:?}|", new_string);
             new_string = new_string.replace("  ", " ");
 
             purged_vec.push_str(&new_string);
